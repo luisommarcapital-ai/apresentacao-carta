@@ -2,15 +2,22 @@
 """
 Scraping do post do Instagram: https://www.instagram.com/p/DZAW7ruHLeR/
 
-Uso:
-    python3 scrape_instagram.py
+Modos de uso:
+    # Via sessionid do browser (recomendado — funciona em servidores):
+    python3 scrape_instagram.py --sessionid SEU_SESSIONID
+
+    # Via usuário/senha (pode falhar em IPs de datacenter):
     python3 scrape_instagram.py --user SEU_USUARIO --password SUA_SENHA
+
+Como obter o sessionid:
+    1. Abra o Instagram no Chrome já logado
+    2. F12 → Application → Cookies → https://www.instagram.com
+    3. Copie o valor do cookie "sessionid"
 """
 
 import json
 import argparse
 import sys
-from datetime import datetime
 
 try:
     import instaloader
@@ -20,7 +27,7 @@ except ImportError:
 POST_SHORTCODE = "DZAW7ruHLeR"
 
 
-def scrape_post(username: str = None, password: str = None) -> dict:
+def scrape_post(username: str = None, password: str = None, sessionid: str = None) -> dict:
     L = instaloader.Instaloader(
         download_pictures=False,
         download_videos=False,
@@ -31,7 +38,11 @@ def scrape_post(username: str = None, password: str = None) -> dict:
         quiet=True,
     )
 
-    if username and password:
+    if sessionid:
+        print("Autenticando via sessionid do browser...")
+        L.context._session.cookies.update({"sessionid": sessionid})
+        L.context.username = username or "user"
+    elif username and password:
         print(f"Autenticando como @{username}...")
         L.login(username, password)
 
@@ -72,15 +83,16 @@ def scrape_post(username: str = None, password: str = None) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Scraping de post do Instagram")
-    parser.add_argument("--user", help="Usuário do Instagram (opcional)")
-    parser.add_argument("--password", help="Senha do Instagram (opcional)")
+    parser.add_argument("--user", help="Usuário do Instagram")
+    parser.add_argument("--password", help="Senha do Instagram")
+    parser.add_argument("--sessionid", help="Cookie sessionid extraído do browser (recomendado)")
     args = parser.parse_args()
 
     try:
-        data = scrape_post(args.user, args.password)
+        data = scrape_post(args.user, args.password, args.sessionid)
     except instaloader.exceptions.LoginRequiredException:
         print("\nErro: Este post requer autenticação.")
-        print("Execute com: python3 scrape_instagram.py --user SEU_USUARIO --password SUA_SENHA")
+        print("Use: python3 scrape_instagram.py --sessionid SEU_SESSIONID")
         sys.exit(1)
     except instaloader.exceptions.PostChangedException:
         print("\nErro: Post não encontrado ou removido.")
