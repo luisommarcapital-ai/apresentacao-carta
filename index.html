@@ -182,9 +182,9 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 <!-- ===== STEP 2 — O PROBLEMA ===== -->
 <div class="step" id="step2">
 <div class="container">
-  <div class="h1">No financiamento você paga o imóvel <span>duas vezes</span>.</div>
+  <div class="h1" id="step2-headline">No financiamento você paga o imóvel <span>duas vezes</span>.</div>
   <div class="divider"></div>
-  <div class="lead">Num financiamento de R$ 600 mil em 30 anos, o custo total passa de R$ 1,6 milhão — e você ainda precisa ter 20–30% de entrada no dia da assinatura.</div>
+  <div class="lead" id="step2-lead">Num financiamento de R$ 600 mil em 30 anos, o custo total passa de R$ 1,6 milhão — e você ainda precisa ter 20–30% de entrada no dia da assinatura.</div>
 
   <table class="compare">
     <tr><th>Modalidade</th><th>Total pago*</th><th>Entrada</th><th>Juros</th><th>Acesso</th></tr>
@@ -340,7 +340,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
 
   <div class="highlight">
     <div class="highlight-label">Perfil do cliente</div>
-    <div class="highlight-text">Profissional liberal, 41 anos, Nordeste. Renda de R$ 14.000/mês. Não se enquadrava no MCMV e o banco exigia R$ 150k de entrada para um imóvel de R$ 500k — mais 30 anos de compromisso.</div>
+    <div class="highlight-text" id="step6-profile">Profissional liberal, 41 anos, Nordeste. Renda de R$ 14.000/mês. Não se enquadrava no MCMV e o banco exigia R$ 150k de entrada para um imóvel de R$ 500k — mais 30 anos de compromisso.</div>
   </div>
 
   <div class="sec-steps">
@@ -369,7 +369,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
       <div class="sec-num">4</div>
       <div class="sec-content">
         <h4>Resultado final</h4>
-        <p>Total pago: ~R$ 656k. Financiamento equivalente custaria ~R$ 1.420k. Economia real: <strong>R$ 764.000</strong>.</p>
+        <p id="step6-result">Total pago: ~R$ 656k. Financiamento equivalente custaria ~R$ 1.420k. Economia real: <strong>R$ 764.000</strong>.</p>
       </div>
     </div>
   </div>
@@ -441,7 +441,7 @@ body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(
     <div class="h1" style="color:var(--cream);margin-bottom:16px;font-size:42px">Análise gratuita,<br>sem compromisso, <span>direto com Gabriel</span>.</div>
     <p style="font-size:19px;line-height:1.6;color:rgba(245,240,232,.72);max-width:600px;margin:0 auto 32px">Você viu os números. Agora vamos olhar o seu caso — valor do imóvel, entrada disponível, prazo — e ver se a carta contemplada é o caminho certo para você.</p>
 
-    <a href="https://wa.me/5583999025887?text=Olá%2C%20vim%20pela%20apresentação%20da%20Sommar%20Capital%20e%20quero%20entender%20se%20a%20carta%20contemplada%20faz%20sentido%20para%20o%20meu%20caso." target="_blank" style="display:inline-block;margin-bottom:20px">
+    <a id="cta-wa-link" href="https://wa.me/5583999025887?text=Olá%2C%20vim%20pela%20apresentação%20da%20Sommar%20Capital%20e%20quero%20entender%20se%20a%20carta%20contemplada%20faz%20sentido%20para%20o%20meu%20caso." target="_blank" style="display:inline-block;margin-bottom:20px">
       <button class="btn btn-gold" style="font-size:19px;padding:18px 44px">Falar com Gabriel agora →</button>
     </a>
 
@@ -475,13 +475,52 @@ function goToStep(n) {
   document.getElementById('step'+cur).classList.remove('active');
   cur=n;
   document.getElementById('step'+cur).classList.add('active');
+  if(n===2) applyGoalContent();
   updateUI();
 }
-function selectGoal(el) {
+let userGoal = '';
+const GOAL_CONTENT = {
+  casa: {
+    step2headline: 'No financiamento você paga o imóvel <span>duas vezes</span>.',
+    step2lead: 'Num financiamento de R$ 600 mil em 30 anos, o custo total passa de R$ 1,6 milhão — e você ainda precisa ter 20–30% de entrada no dia da assinatura.',
+    step6profile: 'Profissional liberal, 41 anos, Nordeste. Renda de R$ 14.000/mês. Não se enquadrava no MCMV e o banco exigia R$ 150k de entrada para um imóvel de R$ 500k — mais 30 anos de compromisso.',
+    step6result: 'Total pago: ~R$ 656k. Financiamento equivalente custaria ~R$ 1.420k. Economia real: <strong>R$ 764.000</strong>.',
+    ctaText: 'Olá%2C%20vim%20pela%20apresentação%20da%20Sommar%20Capital.%20Quero%20sair%20do%20aluguel%20e%20entender%20se%20a%20carta%20contemplada%20faz%20sentido%20para%20o%20meu%20caso.',
+  },
+  capital: {
+    step2headline: 'Seu imóvel pode <span>trabalhar por você</span> — sem você ter que vendê-lo.',
+    step2lead: 'Quem tem patrimônio não precisa se descapitalizar para acessar crédito. A carta contemplada permite usar o crédito do consórcio como alavanca para capital de giro ou novos investimentos.',
+    step6profile: 'Empresário, 47 anos, São Paulo. Tinha imóvel quitado de R$ 800k. Precisava de R$ 300k para expansão do negócio sem abrir mão do imóvel nem pagar juros de crédito empresarial.',
+    step6result: 'Usou carta contemplada de R$ 300k para adquirir um segundo imóvel e alugá-lo, gerando R$ 2.800/mês. Taxa administrativa total: 18%. Custo de capital ~3x menor que crédito bancário empresarial.',
+    ctaText: 'Olá%2C%20vim%20pela%20apresentação%20da%20Sommar%20Capital.%20Tenho%20imóvel%20e%20quero%20entender%20como%20acessar%20capital%20sem%20vender%20nem%20me%20descapitalizar.',
+  },
+  patrimonio: {
+    step2headline: 'Imóvel como investimento: <span>o custo de aquisição</span> define o retorno.',
+    step2lead: 'Quem compra imóvel para investir sabe que a rentabilidade começa no preço de compra. Carta contemplada permite comprar à vista com desconto real — o que financia jamais consegue.',
+    step6profile: 'Investidor, 38 anos, João Pessoa. Objetivo: adquirir imóvel para renda de aluguel. Banco exigia 25% de entrada e 30 anos de compromisso — corroendo o yield desde o início.',
+    step6result: 'Adquiriu imóvel de R$ 450k à vista com 9% de desconto (R$ 40,5k). Total carta: ~R$ 570k. Renda de aluguel: R$ 3.200/mês. Yield sobre custo total: 6,7% a.a. — contra ~4,2% com financiamento.',
+    ctaText: 'Olá%2C%20vim%20pela%20apresentação%20da%20Sommar%20Capital.%20Quero%20adquirir%20imóvel%20como%20investimento%20com%20o%20menor%20custo%20total%20possível.',
+  },
+};
+
+function selectGoal(el, goal) {
   document.querySelectorAll('#goal-cards .card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
+  userGoal = goal;
   const btn=document.getElementById('btn1');
   btn.style.opacity='1'; btn.style.pointerEvents='auto';
+}
+
+function applyGoalContent() {
+  const g = GOAL_CONTENT[userGoal] || GOAL_CONTENT.casa;
+  document.getElementById('step2-headline').innerHTML = g.step2headline;
+  document.getElementById('step2-lead').textContent = g.step2lead.replace(/<[^>]+>/g,'');
+  // keep bold tags in step2lead — use innerHTML
+  document.getElementById('step2-lead').innerHTML = g.step2lead;
+  document.getElementById('step6-profile').textContent = g.step6profile;
+  document.getElementById('step6-result').innerHTML = g.step6result;
+  const ctaBtn = document.getElementById('cta-wa-link');
+  if (ctaBtn) ctaBtn.href = 'https://wa.me/5583999025887?text=' + g.ctaText;
 }
 function formatCurrency(input) {
   let v=input.value.replace(/\D/g,'');
